@@ -1,6 +1,6 @@
 <?php
 // Configuration
-$DEEPSEEK_API_KEY = 'sk-6c2d1abb11624d65a5297aef975317b2';
+$DEEPSEEK_API_KEY = 'api goes here ';
 $DEEPSEEK_API_URL = "https://api.deepseek.com/v1/analyse"; // Hypothetical API endpoint
 $OUTPUT_FORMAT = "json"; // Choose "json" or "txt"
 $MAX_FILE_SIZE_MB = 10; // Skip files larger than this (in MB)
