@@ -1,0 +1,29 @@
+# 1. CPU Usage (Percentage)
+$CPU = (Get-WmiObject Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average
+
+# 2. Disk Usage (C: drive)
+$Disk = Get-PSDrive C | Select-Object Used, Free
+$DiskPercent = [math]::Round(($Disk.Used / ($Disk.Used + $Disk.Free)) * 100, 2)
+
+# 3. RAM Usage (GB)
+$RAM = Get-WmiObject Win32_OperatingSystem
+$RAM_Used = [math]::Round(($RAM.TotalVisibleMemorySize - $RAM.FreePhysicalMemory) / 1MB, 2)
+$RAM_Total = [math]::Round($RAM.TotalVisibleMemorySize / 1MB, 2)
+
+# 4. Check Services (Adjust names as needed)
+$Services = @("DNS", "DHCPServer", "sshd", "Apache2.4", "LDAP")
+$ServiceStatus = @()
+
+foreach ($Service in $Services) {
+    $Status = (Get-Service -Name $Service -ErrorAction SilentlyContinue).Status
+    if ($null -eq $Status) { $Status = "Not Installed" }
+    $ServiceStatus += "$Service: $Status"
+}
+
+# 5. Output JSON
+@{
+    cpu_usage = "$CPU%"
+    disk_usage = "$DiskPercent%"
+    ram_usage = "$RAM_Used GB / $RAM_Total GB"
+    services = $ServiceStatus -join ", "
+} | ConvertTo-Json
